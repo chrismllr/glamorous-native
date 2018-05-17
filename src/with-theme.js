@@ -9,11 +9,13 @@ function generateWarningMessage(componentName) {
 
 export default function withTheme(ComponentToTheme) {
   class ThemedComponent extends React.Component {
-    state = {theme: {}}
     setTheme = theme => this.setState({theme})
 
-    componentWillMount() {
-      if (!this.context[CHANNEL]) {
+    constructor(props, context) {
+      super(props, context)
+      let initialState;
+
+      if (!context[CHANNEL]) {
         if (__DEV__) {
           // eslint-disable-next-line no-console
           console.warn(
@@ -25,10 +27,12 @@ export default function withTheme(ComponentToTheme) {
           )
         }
 
-        return
+        initialState = { theme: {} }
+      } else {
+        initialState = { theme: context[CHANNEL].getState() }
       }
 
-      this.setState({theme: this.context[CHANNEL].getState()})
+      this.state = initialState;
     }
 
     componentDidMount() {

@@ -19,6 +19,15 @@ export default class ThemeProvider extends React.Component {
 
   broadcast = brcast(this.props.theme)
 
+  constructor(props, context) {
+    super(props, context)
+
+    if (context[CHANNEL]) {
+      this.setOuterTheme(context[CHANNEL].getState())
+      this.broadcast.setState(this.getTheme())
+    }
+  }
+
   getTheme(passedTheme) {
     const theme = passedTheme || this.props.theme
     return {...this.outerTheme, ...theme}
@@ -40,16 +49,9 @@ export default class ThemeProvider extends React.Component {
     }
   }
 
-  componentWillMount() {
-    if (this.context[CHANNEL]) {
-      this.setOuterTheme(this.context[CHANNEL].getState())
-      this.broadcast.setState(this.getTheme())
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.theme !== nextProps.theme) {
-      this.broadcast.setState(this.getTheme(nextProps.theme))
+  componentDidUpdate(prevProps) {
+    if (prevProps.theme !== this.props.theme) {
+      this.broadcast.setState(this.getTheme(this.props.theme))
     }
   }
 
