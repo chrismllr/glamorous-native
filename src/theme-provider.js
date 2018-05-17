@@ -17,10 +17,10 @@ export default class ThemeProvider extends React.Component {
     children: PropTypes.node,
   }
 
-  broadcast = brcast(this.props.theme)
-
   constructor(props, context) {
     super(props, context)
+
+    this.broadcast = brcast(props.theme)
 
     if (context[CHANNEL]) {
       this.setOuterTheme(context[CHANNEL].getState())

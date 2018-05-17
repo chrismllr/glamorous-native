@@ -13,7 +13,7 @@ export default function withTheme(ComponentToTheme) {
 
     constructor(props, context) {
       super(props, context)
-      let initialState;
+      let initialState = { theme: {} }
 
       if (!context[CHANNEL]) {
         if (__DEV__) {
@@ -26,19 +26,15 @@ export default function withTheme(ComponentToTheme) {
             ),
           )
         }
-
-        initialState = { theme: {} }
       } else {
         initialState = { theme: context[CHANNEL].getState() }
       }
 
-      this.state = initialState;
-    }
-
-    componentDidMount() {
-      if (this.context[CHANNEL]) {
-        this.unsubscribe = this.context[CHANNEL].subscribe(this.setTheme)
+      if (context[CHANNEL]) {
+        this.unsubscribe = context[CHANNEL].subscribe(this.setTheme)
       }
+
+      this.state = initialState;
     }
 
     componentWillUnmount() {

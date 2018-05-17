@@ -33,7 +33,7 @@ export default function createGlamorous(splitProps) {
 
       class GlamorousComponent extends React.Component {
         setTheme = theme => this.setState({theme})
-        
+
         static getDerivedStateFromProps(nextProps, prevState) {
           if (nextProps.theme !== prevState.theme) {
             return { theme: nextProps.theme }
@@ -44,28 +44,23 @@ export default function createGlamorous(splitProps) {
         constructor(props, context) {
           super(props, context)
           const { theme } = props;
-          let initialState;
-          
-          if (this.context[CHANNEL]) {
-            initialState = theme ? theme : this.context[CHANNEL].getState()
-          } else {
-            initalState = theme || {}
-          }
-          
-          this.state = initialState;
-          this.onRef = this.onRef.bind(this)
-        }
+          let initialState = theme || {}
 
-        componentDidMount() {
-          if (this.context[CHANNEL] && !this.props.theme) {
-            this.unsubscribe = this.context[CHANNEL].subscribe(this.setTheme)
+          if (context[CHANNEL]) {
+            initialState = theme ? theme : context[CHANNEL].getState()
           }
+
+          if (context[CHANNEL] && !props.theme) {
+            this.unsubscribe = context[CHANNEL].subscribe(this.setTheme)
+          }
+
+          this.state = initialState
+          this.onRef = this.onRef.bind(this)
         }
 
         componentWillUnmount() {
           this.unsubscribe && this.unsubscribe()
         }
-
 
         setNativeProps(nativeProps) {
           if (this.innerComponent) {
